@@ -1,0 +1,29 @@
+/* Navbar Styling */
+.navbar {
+  position: fixed;
+  left: var(--sidebar-width);
+  top: 0;
+  right: 0;
+  height: var(--navbar-height);
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  z-index: 90;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 32px;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  color: var(--gray-800);
+  font-weight: 600;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+}

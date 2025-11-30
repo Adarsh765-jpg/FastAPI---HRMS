@@ -1,0 +1,18 @@
+/* Layout Styling */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-wrapper {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  margin-top: var(--navbar-height);
+  padding: 32px;
+  min-height: calc(100vh - var(--navbar-height));
+}
