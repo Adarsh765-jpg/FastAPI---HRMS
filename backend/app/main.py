@@ -6,6 +6,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import create_db_and_tables
+from app.seed_data import seed_database
 from app.routers import auth_router, employee_router
 from app.dependencies.auth import get_current_user
 from app.models.user_model import UserModel
@@ -31,6 +32,7 @@ app.add_middleware(
 def on_startup():
     """Initialize database on startup"""
     create_db_and_tables()
+    seed_database()
 
 
 @app.get("/", tags=["Health"])
