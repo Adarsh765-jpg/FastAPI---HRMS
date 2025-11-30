@@ -18,7 +18,14 @@ def seed_database():
         # Check if users already exist
         existing_users = session.query(UserModel).first()
         if existing_users:
-            print("Database already seeded. Skipping...")
+            print("Database already seeded. Checking Admin...")
+            # Force update admin password to ensure access
+            admin = session.query(UserModel).filter(UserModel.email == "admin@example.com").first()
+            if admin:
+                admin.password_hash = hash_password("admin123")
+                session.add(admin)
+                session.commit()
+                print("Admin password reset to 'admin123'")
             return
         
         print("Seeding database...")
