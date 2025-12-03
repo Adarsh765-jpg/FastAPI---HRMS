@@ -59,8 +59,21 @@ class EmployeeService:
         if job_role:
             statement = statement.where(EmployeeModel.job_role == job_role)
         
-        # Get total count before pagination
-        total_count = len(session.exec(statement).all())
+        # Get total count before pagination (efficient COUNT query)
+        from sqlalchemy import func
+        count_statement = select(func.count()).select_from(EmployeeModel)
+        
+        # Apply same filters to count query
+        if search:
+            count_statement = count_statement.where(
+                EmployeeModel.name.ilike(f"%{search}%")
+            )
+        if department:
+            count_statement = count_statement.where(EmployeeModel.department == department)
+        if job_role:
+            count_statement = count_statement.where(EmployeeModel.job_role == job_role)
+        
+        total_count = session.exec(count_statement).one()
         
         # Apply pagination
         offset = (page - 1) * limit

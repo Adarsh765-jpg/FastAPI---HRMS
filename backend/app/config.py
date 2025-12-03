@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = "sqlite:///./hrms.db"
+    DATABASE_ECHO: bool = False  # Set to True for SQL query logging
     
     # JWT Configuration
     JWT_SECRET_KEY: str = "monaco"

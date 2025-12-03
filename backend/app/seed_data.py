@@ -1,7 +1,7 @@
 """
 Database seed script to create initial users and employees
 """
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.database import engine, create_db_and_tables
 from app.models.user_model import UserModel
 from app.models.employee_model import EmployeeModel
@@ -16,11 +16,14 @@ def seed_database():
     
     with Session(engine) as session:
         # Check if users already exist
-        existing_users = session.query(UserModel).first()
+        existing_user_statement = select(UserModel)
+        existing_users = session.exec(existing_user_statement).first()
+        
         if existing_users:
             print("Database already seeded. Checking Admin...")
             # Force update admin password to ensure access
-            admin = session.query(UserModel).filter(UserModel.email == "admin@example.com").first()
+            admin_statement = select(UserModel).where(UserModel.email == "admin@example.com")
+            admin = session.exec(admin_statement).first()
             if admin:
                 admin.password_hash = hash_password("admin123")
                 session.add(admin)

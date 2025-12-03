@@ -2,6 +2,7 @@
 Main FastAPI application entry point
 """
 from typing import Annotated
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
@@ -11,11 +12,24 @@ from app.routers import auth_router, employee_router
 from app.dependencies.auth import get_current_user
 from app.models.user_model import UserModel
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize database on startup"""
+    print("🚀 Starting up application...")
+    create_db_and_tables()
+    seed_database()
+    print("✅ Database initialized")
+    yield
+    print("🛑 Shutting down application...")
+
+
 # Create FastAPI app
 app = FastAPI(
     title="HRMS Employee Management API",
     description="Production-ready HRMS with JWT Auth and RBAC",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Add CORS middleware
@@ -26,13 +40,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-def on_startup():
-    """Initialize database on startup"""
-    create_db_and_tables()
-    seed_database()
 
 
 @app.get("/", tags=["Health"])

@@ -100,12 +100,16 @@ print("-" * 70)
 headers = {"Authorization": f"Bearer {admin_token}"}
 new_employee = {
     "name": "Test Employee",
+    "email": "test.employee@example.com",
+    "password": "test123",
+    "role": "employee",
     "department": "QA",
     "job_role": "QA Engineer",
     "salary": 80000.00
 }
 response = requests.post(f"{BASE_URL}/employees/", json=new_employee, headers=headers)
 print(f"Status: {response.status_code}")
+test_employee_id = None  # Initialize variable
 if response.status_code == 201:
     created = response.json()
     print(f"✅ Employee created with ID: {created['id']}")
@@ -115,6 +119,8 @@ elif response.status_code == 200:
     created = response.json()
     print(f"✅ Employee created with ID: {created['id']}")
     test_employee_id = created['id']
+else:
+    print(f"❌ Failed to create employee: {response.text}")
 
 # Test 7: Create employee (Employee role - should fail)
 print("\n" + "=" * 70)
@@ -144,20 +150,24 @@ if response.status_code == 200:
 print("\n" + "=" * 70)
 print("9. UPDATE EMPLOYEE - HR (should work)")
 print("-" * 70)
-headers = {"Authorization": f"Bearer {hr_token}"}
-update_data = {"salary": 85000.00}
-response = requests.put(f"{BASE_URL}/employees/{test_employee_id}", json=update_data, headers=headers)
-print(f"Status: {response.status_code}")
-if response.status_code == 200:
-    updated = response.json()
-    print(f"✅ Employee updated")
-    print(f"   New salary: ${updated['salary']:,.2f}")
+if test_employee_id:
+    headers = {"Authorization": f"Bearer {hr_token}"}
+    update_data = {"salary": 85000.00}
+    response = requests.put(f"{BASE_URL}/employees/{test_employee_id}", json=update_data, headers=headers)
+    print(f"Status: {response.status_code}")
+    if response.status_code == 200:
+        updated = response.json()
+        print(f"✅ Employee updated")
+        print(f"   New salary: ${updated['salary']:,.2f}")
+else:
+    print("⚠️ Skipped - no test employee created")
 
 # Test 10: Update employee (Employee role - should fail)
 print("\n" + "=" * 70)
 print("10. UPDATE EMPLOYEE - EMPLOYEE ROLE (should fail with 403)")
 print("-" * 70)
 headers = {"Authorization": f"Bearer {employee_token}"}
+update_data = {"salary": 85000.00}
 response = requests.put(f"{BASE_URL}/employees/1", json=update_data, headers=headers)
 print(f"Status: {response.status_code}")
 if response.status_code == 403:
@@ -167,11 +177,14 @@ if response.status_code == 403:
 print("\n" + "=" * 70)
 print(f"11. DELETE EMPLOYEE - ADMIN (should work)")
 print("-" * 70)
-headers = {"Authorization": f"Bearer {admin_token}"}
-response = requests.delete(f"{BASE_URL}/employees/{test_employee_id}", headers=headers)
-print(f"Status: {response.status_code}")
-if response.status_code == 204:
-    print(f"✅ Employee deleted successfully")
+if test_employee_id:
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    response = requests.delete(f"{BASE_URL}/employees/{test_employee_id}", headers=headers)
+    print(f"Status: {response.status_code}")
+    if response.status_code == 204:
+        print(f"✅ Employee deleted successfully")
+else:
+    print("⚠️ Skipped - no test employee created")
 
 # Test 12: Delete employee (Employee role - should fail)
 print("\n" + "=" * 70)

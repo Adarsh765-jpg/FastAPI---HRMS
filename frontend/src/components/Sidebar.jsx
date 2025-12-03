@@ -20,7 +20,7 @@ const Sidebar = () => {
           <span>📊</span> Dashboard
         </NavLink>
 
-        <NavLink to="/employees" className="nav-item">
+        <NavLink to="/employees" end className="nav-item">
           <span>👥</span> Employees
         </NavLink>
 
